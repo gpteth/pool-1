@@ -151,6 +151,20 @@ $P(i)$ 即为 tick 在 i 位置的价格. 后一个价格点的价格是前一�
 
 $$i = \log_{1.0001}(P(i))$$
 
+正如上述所说，Uniswap V3 中价格存储的是 $\sqrt{P}$，而不是 $P$，因此实际的公式为：
+
+$$\sqrt{P(i)} = \sqrt{1.0001^i} = 1.0001^{i/2}$$
+
+所以我们可以得到如下几个刻度的价格（上述图片中每个刻度所对应的价格）：
+
+**Tick 0**： $\sqrt{P(0)} = 1$
+
+**Tick 1**： $\sqrt{P(1)} = \sqrt{1.0001} ≈ 1.00005$
+
+**Tick 2**： $\sqrt{P(2)} = \sqrt{1.0001^2} ≈ 1.0001$
+
+**Tick 3**： $\sqrt{P(3)} = \sqrt{1.0001^3} ≈ 1.00015$
+
 V3 规定只有被 tickSpacing 整除的 tick 才允许被初始化，tickSpacing 越大，每个 tick 流动性越多，tick 之间滑点越大，但会节省跨 tick 操作的 gas。
 
 随后确认对应的交易池合约尚未被创建，调用 [deploy](https://github.com/Uniswap/v3-core/blob/main/contracts/UniswapV3PoolDeployer.sol#L27)，参数为工厂合约地址，`token0` 地址，`token1` 地址，`fee`，以及上面提到的 `tickSpacing`。
