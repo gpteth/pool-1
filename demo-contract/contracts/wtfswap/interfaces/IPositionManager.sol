@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface IPositionManager is IERC721 {
     struct PositionInfo {
+        uint256 id;
         address owner;
         address token0;
         address token1;
@@ -14,13 +15,17 @@ interface IPositionManager is IERC721 {
         uint128 liquidity;
         int24 tickLower;
         int24 tickUpper;
-        uint256 tokensOwed0;
-        uint256 tokensOwed1;
+        uint128 tokensOwed0;
+        uint128 tokensOwed1;
+        // feeGrowthInside0LastX128 和 feeGrowthInside1LastX128 用于计算手续费
+        uint256 feeGrowthInside0LastX128;
+        uint256 feeGrowthInside1LastX128;
     }
 
-    function getPositionInfo(
-        uint256[] memory positionId
-    ) external view returns (PositionInfo[] memory positionInfo);
+    function getAllPositions()
+        external
+        view
+        returns (PositionInfo[] memory positionInfo);
 
     struct MintParams {
         address token0;

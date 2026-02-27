@@ -1,3 +1,5 @@
+本节作者：[@愚指导](https://x.com/yudao1024)
+
 这一讲我们将支持通过钱包链接区块链，你也可以参考之前基础课程中的[连接钱包](../03_ConnectWallet/)学习。
 
 ---
@@ -17,6 +19,7 @@ npm install antd @ant-design/web3 @ant-design/web3-wagmi wagmi viem @tanstack/re
 ```diff
 import React from "react";
 import Header from "./Header";
+import styles from "./styles.module.css";
 + import {
 +   MetaMask,
 +   OkxWallet,
@@ -26,27 +29,6 @@ import Header from "./Header";
 +   Hardhat,
 +   Mainnet,
 + } from "@ant-design/web3-wagmi";
-+ import { QueryClient } from "@tanstack/react-query";
-+ import { createConfig, http } from "wagmi";
-+ import { mainnet, hardhat } from "wagmi/chains";
-+ import { walletConnect } from "wagmi/connectors";
-
-+ const queryClient = new QueryClient();
-
-+ const config = createConfig({
-+   chains: [mainnet, hardhat],
-+   transports: {
-+     [mainnet.id]: http(),
-+     [hardhat.id]: http("http://127.0.0.1:8545/"),
-+   },
-+   connectors: [
-+     walletConnect({
-+       showQrModal: false,
-+       projectId: "c07c0051c2055890eade3556618e38a6",
-+     }),
-+   ],
-+ });
-
 
 interface WtfLayoutProps {
   children: React.ReactNode;
@@ -54,7 +36,6 @@ interface WtfLayoutProps {
 
 const WtfLayout: React.FC<WtfLayoutProps> = ({ children }) => {
   return (
--     <div>
 +     <WagmiWeb3ConfigProvider
 +       eip6963={{
 +         autoAddInjectedWallets: true,
@@ -69,12 +50,14 @@ const WtfLayout: React.FC<WtfLayoutProps> = ({ children }) => {
 +         }),
 +         OkxWallet(),
 +       ]}
-+       config={config}
-+       queryClient={queryClient}
++       walletConnect={{
++         projectId: "c07c0051c2055890eade3556618e38a6",
++       }}
 +     >
-      <Header />
-      {children}
--     </div>
+      <div className={styles.layout}>
+        <Header />
+        {children}
+      </div>
 +     </WagmiWeb3ConfigProvider>
   );
 };

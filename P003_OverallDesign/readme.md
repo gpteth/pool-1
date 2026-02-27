@@ -1,8 +1,10 @@
+本节作者：[@愚指导](https://x.com/yudao1024)
+
 在上面的几讲中我们大概介绍了 DEX，分析了我们大概要做什么，以及参考了 Uniswap 的合约代码。那这一讲我们开始设计 Wtfswap 的整体功能，我们会设计一个类似 Uniswap 但是有部分区别于它的功能，会做一些简化调整，用于课程开发练习。
 
 ---
 
-我们在上一讲[《Uniswap 代码解析》](../P002_WhatIsUniswap/)中分析了 Uniswap V3 的代码，也简单提到了 Uniswap V2。Wtfswap 将会基于 Uniswap V2 并吸收部分 Uniswap V3 的概念，设计一个新的 DEX。
+我们在上一讲[《Uniswap 代码解析》](../P002_WhatIsUniswap/)中分析了 Uniswap V3 的代码，Wtfswap 将会参考 Uniswap V3，简化其功能，设计一个新的 DEX。
 
 首先我们先回顾一下 Uniswap V2 和 Uniswap V3 的差异，在 V2 和 V3 中，一个代币对和费率唯一确定了一个交易池，在 V2 中，LP 向这样一个池子中注入流动性，价格可以在正无穷到负无穷之间波动。V3 相比 V2 最大的差异就是在 LP 注入流动性时可以定义一个价格区间，让 LP 可以提升自身的资金利用率。但是这样会导致 V3 交易的逻辑更复杂，因为一个池子里面可能包含了不同价格区间的流动性，交易的逻辑会更复杂。
 
@@ -23,15 +25,15 @@ Swap 页面，用于交易代币：
 
 ![swap](./img/swap.png)
 
-Pool 页面，用于查看当前已经有的交易池：
+Pool 页面，用于查看当前已经有的交易池和创建交易池。如下图，点击 `Add Pool` 弹窗创建交易池，点击 `My Positions` 查看跳转到 Positions 页面查看自己的头寸：
 
 ![pool](./img/pool.png)
 
-Positions 页面，用于查看和移除流动性：
+Positions 页面，用于查看和移除流动性（头寸）：
 
 ![pool](./img/positions.png)
 
-Positions 页面创建流动性弹窗，用于创建新的流动性（如果没有对应的交易池，会先创建交易池）：
+Positions 页面创建流动性弹窗，用于创建新的流动性：
 
 ![add](./img/add.png)
 

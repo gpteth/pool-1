@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Connector, ConnectButton } from "@ant-design/web3";
@@ -6,6 +7,11 @@ import styles from "./styles.module.css";
 export default function WtfHeader() {
   const pathname = usePathname();
   const isSwapPage = pathname === "/wtfswap";
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setLoading(false);
+  }, []);
 
   return (
     <div className={styles.header}>
@@ -25,13 +31,15 @@ export default function WtfHeader() {
         </Link>
       </div>
       <div>
-        <Connector
-          modalProps={{
-            mode: "simple",
-          }}
-        >
-          <ConnectButton type="text" />
-        </Connector>
+        {loading ? null : (
+          <Connector
+            modalProps={{
+              mode: "simple",
+            }}
+          >
+            <ConnectButton type="text" />
+          </Connector>
+        )}
       </div>
     </div>
   );

@@ -18,12 +18,6 @@ interface ISwapCallback {
 }
 
 interface IPool {
-    struct Position {
-        uint128 liquidity;
-        uint128 tokensOwed0;
-        uint128 tokensOwed1;
-    }
-
     function factory() external view returns (address);
 
     function token0() external view returns (address);
@@ -43,6 +37,29 @@ interface IPool {
     function liquidity() external view returns (uint128);
 
     function initialize(uint160 sqrtPriceX96) external;
+
+    /// feeGrowthGlobal0X128 记录从创建到现在，每个流动性累计产生的 token0 的手续费
+    /// @notice The fee growth as a Q128.128 fees of token0 collected per unit of liquidity for the entire life of the pool
+    /// @dev This value can overflow the uint256
+    function feeGrowthGlobal0X128() external view returns (uint256);
+
+    /// feeGrowthGlobal1X128 记录从创建到现在，每个流动性累计产生的 token1 的手续费
+    /// @notice The fee growth as a Q128.128 fees of token1 collected per unit of liquidity for the entire life of the pool
+    /// @dev This value can overflow the uint256
+    function feeGrowthGlobal1X128() external view returns (uint256);
+
+    function getPosition(
+        address owner
+    )
+        external
+        view
+        returns (
+            uint128 _liquidity,
+            uint256 feeGrowthInside0LastX128,
+            uint256 feeGrowthInside1LastX128,
+            uint128 tokensOwed0,
+            uint128 tokensOwed1
+        );
 
     event Mint(
         address sender,
@@ -66,7 +83,9 @@ interface IPool {
     );
 
     function collect(
-        address recipient
+        address recipient,
+        uint128 amount0Requested,
+        uint128 amount1Requested
     ) external returns (uint128 amount0, uint128 amount1);
 
     event Burn(

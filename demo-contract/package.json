@@ -2,6 +2,7 @@
   "name": "hardhat-project",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "@uniswap/v3-sdk": "^3.17.1",
     "hardhat": "^2.22.3"
   },
   "dependencies": {

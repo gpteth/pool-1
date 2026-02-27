@@ -1,9 +1,11 @@
+本节作者：[@Web3Pignard](https://x.com/pignard_web3)
+
 这一讲我们正式走进 Uniswap 的代码解析，准确来说是 Uniswap V3，通过阅读本节，你可以了解到：
 
 1. 什么是 Uniswap，Uniswap 推出了哪些版本，为什么要解析 V3 版本；
 2. Uniswap V3 由哪些合约构成，每个合约的主要功能和核心流程的解析。
 
-解析 Uniswap 的代码可以帮助我们更好的理解后续的课程，当然你也可以直接跳转到后面的实战开发中，需要的时候再来查阅这一讲，但是我们还是建议你可以花一些时间学习一下 Uniswap 的代码实现，为后续的课程做准备。
+解析 Uniswap 的代码可以帮助我们更好的理解后续的课程，当然你也可以直接跳转到后面的实战开发中，需要的时候再来查阅这一讲，但是我们还是建议你可以花一些时间学习一下 Uniswap 的代码实现，为后续的课程做准备。另外 Uniswap 的代码中会包含一些复杂的数学计算逻辑，可能不是很好理解，你也可以在后面的课程中持续学习。如果你只是想要学习基础的去中心化应用开发，可以适当跳过那部分复杂的数学计算逻辑，我们的课程中也会直接使用 Uniswap V3 的一些代码库，降低课程的复杂度。
 
 ---
 
@@ -149,6 +151,20 @@ $P(i)$ 即为 tick 在 i 位置的价格. 后一个价格点的价格是前一�
 
 $$i = \log_{1.0001}(P(i))$$
 
+正如上述所说，Uniswap V3 中价格存储的是 $\sqrt{P}$，而不是 $P$，因此实际的公式为：
+
+$$\sqrt{P(i)} = \sqrt{1.0001^i} = 1.0001^{i/2}$$
+
+所以我们可以得到如下几个刻度的价格（上述图片中每个刻度所对应的价格）：
+
+**Tick 0**： $\sqrt{P(0)} = 1$
+
+**Tick 1**： $\sqrt{P(1)} = \sqrt{1.0001} ≈ 1.00005$
+
+**Tick 2**： $\sqrt{P(2)} = \sqrt{1.0001^2} ≈ 1.0001$
+
+**Tick 3**： $\sqrt{P(3)} = \sqrt{1.0001^3} ≈ 1.00015$
+
 V3 规定只有被 tickSpacing 整除的 tick 才允许被初始化，tickSpacing 越大，每个 tick 流动性越多，tick 之间滑点越大，但会节省跨 tick 操作的 gas。
 
 随后确认对应的交易池合约尚未被创建，调用 [deploy](https://github.com/Uniswap/v3-core/blob/main/contracts/UniswapV3PoolDeployer.sol#L27)，参数为工厂合约地址，`token0` 地址，`token1` 地址，`fee`，以及上面提到的 `tickSpacing`。
@@ -208,7 +224,7 @@ getPool[token1][token0][fee] = pool;
 
 #### 初始化交易池
 
-初始化交易池调用的是 `UniswapV3Factory` 合约的 [initialize](https://github.com/Uniswap/v3-core/blob/main/contracts/UniswapV3Pool.sol#L271)，参数为当前价格 sqrtPriceX96，含义上面已经介绍过了。
+初始化交易池调用的是 `UniswapV3Pool` 合约的 [initialize](https://github.com/Uniswap/v3-core/blob/main/contracts/UniswapV3Pool.sol#L271)，参数为当前价格 sqrtPriceX96，含义上面已经介绍过了。
 
 代码如下：
 
@@ -421,7 +437,7 @@ $$L = \Delta{y}/(\sqrt{Pc}-\sqrt{Pa})$$
 
 $$L = \Delta{y}/(\sqrt{Pb}-\sqrt{Pa})$$
 
-当前价格大于上界 a 时，只有 $\Delta{x}$ 个 token0 起作用，，意味着向 a 点左边添加了如下流动性：
+当前价格大于上界 a 时，只有 $\Delta{x}$ 个 token0 起作用，意味着向 a 点左边添加了如下流动性：
 
 $$L = \Delta{x}\sqrt{Pb*Pa}/(\sqrt{Pb}-\sqrt{Pa})$$
 
